@@ -12,7 +12,7 @@ function SignUp({ navigation }) {
       <TextInput style={styles.input} placeholder="Email" />
       <TextInput style={styles.input} placeholder="Password" />
       <View style={styles.button}>
-        <ButtonLog color={"#12cb12"} titleB="Sign up" />
+        <ButtonLog color={"##31D888"} titleB="Sign up" />
       </View>
       <View style={styles.join}>
         <Text>Already have an account?</Text>

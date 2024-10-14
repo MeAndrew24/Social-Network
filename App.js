@@ -1,18 +1,15 @@
-import { StyleSheet, View } from "react-native";
-import LogIn from "./src/screens/LogIn";
+import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SignUp from "./src/screens/SignUp";
+import NavTab from "./src/screens/NavTab";
+import Navlog from "./src/screens/Navlog";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LogIn">
-        <Stack.Screen name="LogIn" component={LogIn} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-      </Stack.Navigator>
+      <Navlog />
     </NavigationContainer>
   );
 }

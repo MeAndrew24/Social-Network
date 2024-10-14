@@ -16,7 +16,7 @@ export default function LogIn({ navigation }) {
 
       <TextInput style={styles.input} placeholder="Password" />
       <View style={styles.button}>
-        <ButtonLog color={"blue"} titleB="Log In" />
+        <ButtonLog color={"#3066BE"} titleB="Log In" />
       </View>
       <View style={styles.join}>
         <Text>Don't have an account?</Text>
