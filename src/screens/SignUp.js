@@ -1,35 +1,33 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Button,
-  Pressable,
-} from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
+
 import ButtonLog from "../components/ButtonLog";
 
-export default function LogIn({ navigation }) {
+function SignUp({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome Back!</Text>
-      <TextInput style={styles.input} placeholder="Email" />
+      <Text style={styles.title}>Create an account</Text>
+      <TextInput style={styles.input} placeholder="Username" />
 
+      <TextInput style={styles.input} placeholder="Email" />
       <TextInput style={styles.input} placeholder="Password" />
       <View style={styles.button}>
-        <ButtonLog color={"blue"} titleB="Log In" />
+        <ButtonLog color={"#12cb12"} titleB="Sign up" />
       </View>
       <View style={styles.join}>
-        <Text>Don't have an account?</Text>
+        <Text>Already have an account?</Text>
         <Pressable
-          onPress={() => navigation.navigate("SignUp")}
+          onPress={() => navigation.navigate("LogIn")}
           style={({ pressed }) => [pressed && styles.pressedItem]}
         >
-          <Text style={styles.goSign}>Sign Up</Text>
+          <Text style={styles.goSign}>Login</Text>
         </Pressable>
       </View>
     </View>
   );
 }
+
+export default SignUp;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
