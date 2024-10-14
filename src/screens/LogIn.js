@@ -1,11 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Button,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Text, View, TextInput, Pressable } from "react-native";
+import { useState } from "react";
 import ButtonLog from "../components/ButtonLog";
 
 export default function LogIn({ navigation }) {
@@ -14,7 +8,11 @@ export default function LogIn({ navigation }) {
       <Text style={styles.title}>Welcome Back!</Text>
       <TextInput style={styles.input} placeholder="Email" />
 
-      <TextInput style={styles.input} placeholder="Password" />
+      <TextInput
+        secureTextEntry={true}
+        style={styles.input}
+        placeholder="Password"
+      />
       <View style={styles.button}>
         <ButtonLog color={"#3066BE"} titleB="Log In" />
       </View>
