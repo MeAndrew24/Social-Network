@@ -3,7 +3,7 @@ import { Pressable, Text, StyleSheet, View } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons/faHeart";
 
-const Post = ({ username, text, numLikes }) => {
+export default Post = ({ username, text, numLikes }) => {
   const [btnLikePressed, setBtnLikePressed] = useState(false);
   const [btnLikeColor, setBtnLikeColor] = useState("");
 
@@ -35,8 +35,6 @@ const Post = ({ username, text, numLikes }) => {
     </View>
   );
 };
-
-export default Post;
 
 const styles = StyleSheet.create({
   container: {
