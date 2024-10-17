@@ -1,10 +1,14 @@
-import { FlatList } from "react-native";
+import React from "react";
+import { FlatList, View } from "react-native";
 import Post from "../components/Post";
 import usePost from "../hooks/usePost";
+import NewPostButton from "../components/NewPostButton";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Following() {
   const resourceType = "feed";
-  const { posts, loadMorePosts } = usePost(resourceType); 
+  const { posts, loadMorePosts } = usePost(resourceType);
+  const navigation = useNavigation();
 
   const renderPost = ({ item }) => (
     <Post
@@ -15,13 +19,19 @@ export default function Following() {
   );
 
   return (
-    <FlatList
-      data={posts}
-      renderItem={renderPost}
-      keyExtractor={(item) => item.id.toString()}
-      onEndReached={loadMorePosts}
-      onEndReachedThreshold={0.5}
-      initialNumToRender={10}
-    />
+    <View View style={{ flex: 1 }}>
+      <FlatList
+        data={posts}
+        renderItem={renderPost}
+        keyExtractor={(item) => item.id.toString()}
+        onEndReached={loadMorePosts}
+        onEndReachedThreshold={0.5}
+        initialNumToRender={10}
+      />
+
+      <NewPostButton
+        onPress={() => navigation.navigate("Share Your Thoughts")}
+      />
+    </View>
   );
 }
