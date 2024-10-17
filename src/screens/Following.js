@@ -1,11 +1,27 @@
-import { View, Text } from "react-native";
+import { FlatList } from "react-native";
+import Post from "../components/Post";
+import usePost from "../hooks/usePost";
 
-function Following() {
+export default function Following() {
+  const resourceType = "feed";
+  const { posts, loadMorePosts } = usePost(resourceType); 
+
+  const renderPost = ({ item }) => (
+    <Post
+      username={item.username}
+      text={item.content}
+      numLikes={item.likes.length}
+    />
+  );
+
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Here are the people you follow</Text>
-    </View>
+    <FlatList
+      data={posts}
+      renderItem={renderPost}
+      keyExtractor={(item) => item.id.toString()}
+      onEndReached={loadMorePosts}
+      onEndReachedThreshold={0.5}
+      initialNumToRender={10}
+    />
   );
 }
-
-export default Following;
