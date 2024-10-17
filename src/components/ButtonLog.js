@@ -1,8 +1,12 @@
-import { Pressable, Text, StyleSheet, View } from "react-native";
+import {
+  Pressable,
+  Text,
+  StyleSheet,
+  View,
+  ActivityIndicator,
+} from "react-native";
 
-function ButtonLog(props) {
-  const color = props.color;
-
+function ButtonLog({ color, titleB, onPress, loading }) {
   return (
     <Pressable
       style={({ pressed }) => [
@@ -10,8 +14,15 @@ function ButtonLog(props) {
         pressed && styles.pressedItem,
         { backgroundColor: color },
       ]}
+      onPress={onPress}
     >
-      <Text style={styles.buttonTitle}>{props.titleB}</Text>
+      {loading ? (
+        <Text style={styles.buttonTitle}>
+          <ActivityIndicator size="small" />
+        </Text>
+      ) : (
+        <Text style={styles.buttonTitle}>{titleB}</Text>
+      )}
     </Pressable>
   );
 }
