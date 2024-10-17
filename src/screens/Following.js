@@ -1,10 +1,10 @@
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import Post from "../components/Post";
 import usePost from "../hooks/usePost";
 
 export default function Following() {
   const resourceType = "feed";
-  const { posts, loadMorePosts } = usePost(resourceType); 
+  const { posts, loadMorePosts } = usePost(resourceType);
 
   const renderPost = ({ item }) => (
     <Post
@@ -15,13 +15,16 @@ export default function Following() {
   );
 
   return (
-    <FlatList
-      data={posts}
-      renderItem={renderPost}
-      keyExtractor={(item) => item.id.toString()}
-      onEndReached={loadMorePosts}
-      onEndReachedThreshold={0.5}
-      initialNumToRender={10}
-    />
+    <View style={{ alignItems: "center", marginTop: 10 }}>
+      <FlatList
+        style={{ width: "95%" }}
+        data={posts}
+        renderItem={renderPost}
+        keyExtractor={(item) => item.id.toString()}
+        onEndReached={loadMorePosts}
+        onEndReachedThreshold={0.5}
+        initialNumToRender={10}
+      />
+    </View>
   );
 }
