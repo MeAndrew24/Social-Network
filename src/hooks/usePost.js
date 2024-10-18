@@ -17,15 +17,16 @@ export default usePost = (resourceType, initialPage = 1) => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${userSession.token}`
+            Authorization: `Bearer ${userSession.token}`,
           },
         }
       );
 
       if (!response.ok) throw new Error("Error: Unable to fetch posts.");
       const data = await response.json();
-      (data.length === 0) ? setHasMorePosts(false) : setPosts((prevPosts) => [...prevPosts, ...data]);
-
+      data.length === 0
+        ? setHasMorePosts(false)
+        : setPosts((prevPosts) => [...prevPosts, ...data]);
     } catch (error) {
       console.error("Failed to load posts:", error.message);
     } finally {
