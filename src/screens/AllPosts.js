@@ -21,9 +21,10 @@ export default function AllPosts() {
   return (
     <View
       View
-      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}
     >
       <FlatList
+        style={{ width: "95%" }}
         data={posts}
         renderItem={renderPost}
         keyExtractor={(item) => item.id.toString()}

@@ -10,6 +10,7 @@ export default function Following() {
   const { posts, loadMorePosts } = usePost(resourceType);
   const navigation = useNavigation();
 
+
   const renderPost = ({ item }) => (
     <Post
       username={item.username}
@@ -19,8 +20,9 @@ export default function Following() {
   );
 
   return (
-    <View View style={{ flex: 1 }}>
+    <View View style={{ flex: 1,alignItems: "center", marginTop: 10 }}>
       <FlatList
+        style={{ width: "95%" }}
         data={posts}
         renderItem={renderPost}
         keyExtractor={(item) => item.id.toString()}
@@ -28,10 +30,10 @@ export default function Following() {
         onEndReachedThreshold={0.5}
         initialNumToRender={10}
       />
-
       <NewPostButton
         onPress={() => navigation.navigate("Share Your Thoughts")}
       />
+
     </View>
   );
 }
