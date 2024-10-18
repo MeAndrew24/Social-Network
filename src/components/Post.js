@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import { Pressable, Text, StyleSheet, View } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons/faHeart";
+import ProfilePic from "../components/ProfilePic";
 
 export default Post = ({ username, text, numLikes }) => {
+  const PROFILE_PIC_POST_SIZE = 36;
   const [btnLikePressed, setBtnLikePressed] = useState(false);
   const [btnLikeColor, setBtnLikeColor] = useState("");
-
-  // Cambiarlo luego en un hook aparte
-  const [profilePicColor, setProfilePicColor] = useState("#56E39F");
 
   const handlePressLikeBtn = () => {
     setBtnLikePressed(!btnLikePressed);
@@ -21,13 +20,11 @@ export default Post = ({ username, text, numLikes }) => {
         <Text style={styles.username}>{username}</Text>
       </View>
       <View style={styles.row}>
-        <View style={[styles.profilePic, { backgroundColor: profilePicColor }]}>
-          <Text style={styles.capitalLetter}>{username[0]}</Text>
-        </View>
+        <ProfilePic username={username} size={PROFILE_PIC_POST_SIZE}/> 
         <Text style={styles.text}>{text}</Text>
       </View>
       <View style={styles.row}>
-        <Pressable onPress={handlePressLikeBtn} style={styles.btnLike}>
+        <Pressable onPress={handlePressLikeBtn} >
           <FontAwesomeIcon icon={faHeart} color={btnLikeColor} />
         </Pressable>
         <Text>{numLikes} likes</Text>
@@ -77,5 +74,5 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 15,
     flexShrink: 1,
-  },
+  }
 });
