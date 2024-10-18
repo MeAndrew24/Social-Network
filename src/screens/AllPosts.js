@@ -1,9 +1,14 @@
+import React from "react";
 import { FlatList, View } from "react-native";
 import Post from "../components/Post";
 import usePost from "../hooks/usePost";
+import NewPostButton from "../components/NewPostButton";
+import { useNavigation } from "@react-navigation/native";
+
 export default function AllPosts() {
   const resourceType = "posts";
   const { posts, loadMorePosts } = usePost(resourceType);
+  const navigation = useNavigation();
 
   const renderPost = ({ item }) => (
     <Post
@@ -14,7 +19,10 @@ export default function AllPosts() {
   );
 
   return (
-    <View style={{ alignItems: "center", marginTop: 10 }}>
+    <View
+      View
+      style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}
+    >
       <FlatList
         style={{ width: "95%" }}
         data={posts}
@@ -23,6 +31,9 @@ export default function AllPosts() {
         onEndReached={loadMorePosts}
         onEndReachedThreshold={0.5}
         initialNumToRender={10}
+      />
+      <NewPostButton
+        onPress={() => navigation.navigate("Share Your Thoughts")}
       />
     </View>
   );

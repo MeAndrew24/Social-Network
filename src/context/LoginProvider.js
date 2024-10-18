@@ -6,14 +6,6 @@ const LoginProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userSession, setUserSession] = useState({});
 
-  /* 
-    userSession = {
-      "token": "",
-      "userId": numero,
-      "username": ""
-    }
-  */
-
   return (
     <LoginContext.Provider
       value={{ isLoggedIn, setIsLoggedIn, userSession, setUserSession }}
