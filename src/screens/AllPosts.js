@@ -1,6 +1,7 @@
 import { FlatList, View } from "react-native";
 import Post from "../components/Post";
 import usePost from "../hooks/usePost";
+
 export default function AllPosts() {
   const resourceType = "posts";
   const { posts, loadMorePosts } = usePost(resourceType);

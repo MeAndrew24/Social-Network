@@ -1,17 +1,13 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  FlatList,
-} from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, FlatList } from "react-native";
 import { useLogin } from "../context/LoginProvider";
 import Post from "../components/Post";
+import ProfilePic from "../components/ProfilePic";
 import usePost from "../hooks/usePost";
 import useUser from "../hooks/useUser";
 
 function Profile() {
-  const { userInfo, isLoading, error: userError, userColor } = useUser();
+  const PROFILE_PIC_PAGE_SIZE = 72;
+  const { userInfo, isLoading, error: userError } = useUser();
   const { userSession } = useLogin();
 
   const resourceType = `users/${userSession.userId}/posts`;
@@ -36,11 +32,7 @@ function Profile() {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.arriba}>
-        <View style={[styles.profilePic, { backgroundColor: userColor }]}>
-          <Text style={styles.capitalLetter}>
-            {userSession.username[0].toUpperCase()}
-          </Text>
-        </View>
+        <ProfilePic username={userSession.username} size={PROFILE_PIC_PAGE_SIZE}/> 
 
         <View
           style={{
