@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLogin } from "../context/LoginProvider";
 
-const useUser = () => {
+export default useUser = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -10,7 +10,6 @@ const useUser = () => {
   const fetchUserInfo = async () => {
     try {
       setIsLoading(true);
-      
       const response = await fetch(
         `https://social-network-v7j7.onrender.com/api/users/${userSession.userId}`,
         {
@@ -39,5 +38,3 @@ const useUser = () => {
 
   return { userInfo, isLoading, error };
 };
-
-export default useUser;
