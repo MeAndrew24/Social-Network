@@ -34,7 +34,7 @@ export default Post = ({
           <Text style={styles.username}>{username}</Text>
         </View>
         <View style={styles.row}>
-          <ProfilePic username={username} size={PROFILE_PIC_POST_SIZE} />
+          <ProfilePic userID={userID} username={username} size={PROFILE_PIC_POST_SIZE}/>
           <Text style={styles.text}>{text}</Text>
         </View>
         <View style={styles.row}>
