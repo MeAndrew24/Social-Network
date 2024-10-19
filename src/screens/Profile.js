@@ -1,4 +1,5 @@
 import { VirtualizedList, View, Text, StyleSheet, ActivityIndicator, Button } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 import { useLogin } from "../context/LoginProvider";
 import Post from "../components/Post";
@@ -17,6 +18,7 @@ export default function Profile() {
 
   const getItem = (data, index) => data[index];
   const getItemCount = (data) => data.length;
+  const navigation = useNavigation();
   const renderPost = ({ item }) => (
     <Post
       username={item.username}
