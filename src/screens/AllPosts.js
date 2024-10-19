@@ -14,6 +14,7 @@ export default function AllPosts() {
   const getItemCount = (data) => data.length;
   const renderPost = ({ item }) => (
     <Post
+      userID={item.user_id}
       username={item.username}
       text={item.content}
       numLikes={item.likes.length}
