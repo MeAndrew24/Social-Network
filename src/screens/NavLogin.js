@@ -4,7 +4,7 @@ import SignUp from "./SignUp";
 
 const Stack = createNativeStackNavigator();
 
-function Navlog() {
+export default function NavLogin() {
   return (
     <Stack.Navigator initialRouteName="LogIn">
       <Stack.Screen name="LogIn" component={LogIn} />
@@ -13,4 +13,4 @@ function Navlog() {
   );
 }
 
-export default Navlog;
+

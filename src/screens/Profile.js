@@ -1,17 +1,23 @@
-import { View, Text, StyleSheet, ActivityIndicator, FlatList } from "react-native";
+import { VirtualizedList, View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useLogin } from "../context/LoginProvider";
 import Post from "../components/Post";
 import ProfilePic from "../components/ProfilePic";
+import NewPostButton from "../components/NewPostButton";
 import usePost from "../hooks/usePost";
 import useUser from "../hooks/useUser";
 
-function Profile() {
+
+export default function Profile() {
   const PROFILE_PIC_PAGE_SIZE = 72;
-  const { userInfo, isLoading, error: userError } = useUser();
+  const { userInfo } = useUser();
   const { userSession } = useLogin();
 
   const resourceType = `users/${userSession.userId}/posts`;
-  const { posts, loadMorePosts } = usePost(resourceType);
+  const { posts, handleLoadPastPosts, handleLoadNewPosts } = usePost(resourceType);
+  const getItem = (data, index) => data[index];
+  const getItemCount = (data) => data.length;
+  const navigation = useNavigation();
 
   const renderPost = ({ item }) => (
     <Post
@@ -21,14 +27,6 @@ function Profile() {
     />
   );
 
-  if (userError) return <Text>Error: {userError}</Text>;
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3066BE" />
-      </View>
-    );
-  }
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.arriba}>
@@ -54,24 +52,30 @@ function Profile() {
         </View>
       </View>
       <View style={styles.abajo}>
-        <Text style={styles.subtitle}>Posts</Text>
-        <View style={{ alignItems: "center" }}>
-          <FlatList
-            style={{ width: "95%" }}
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+          <VirtualizedList
+            style={{ width: "96%" }}
             data={posts}
             renderItem={renderPost}
             keyExtractor={(item) => item.id.toString()}
-            onEndReached={loadMorePosts}
-            onEndReachedThreshold={0.5}
-            initialNumToRender={10}
+            getItem={getItem}
+            getItemCount={getItemCount}
+            onEndReached={handleLoadPastPosts}
+            onEndReachedThreshold={0.1}
+            onStartReached={handleLoadNewPosts}
+            onStartReachedThreshold={0.1}
+            ListHeaderComponent={
+              <Text style={styles.subtitle}>Posts</Text>
+            }
+          />
+          <NewPostButton
+            onPress={() => navigation.navigate("Share Your Thoughts")}
           />
         </View>
       </View>
     </View>
   );
 }
-
-export default Profile;
 
 const styles = StyleSheet.create({
   arriba: {
@@ -89,10 +93,10 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 20,
-    marginLeft: 10,
-    marginTop: 10,
+    marginLeft: 20,
+    marginTop: 20,
     marginBottom: 10,
-    fontWeight: "400",
+    fontWeight: "bold",
   },
   abajo: {
     width: "100%",
