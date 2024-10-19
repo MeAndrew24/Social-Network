@@ -3,8 +3,21 @@ import { Pressable, Text, StyleSheet, View } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons/faHeart";
 import ProfilePic from "../components/ProfilePic";
+import {
+  faEdit,
+  faPenToSquare,
+  faTrashAlt,
+} from "@fortawesome/free-regular-svg-icons";
 
-export default Post = ({ userID, username, text, numLikes }) => {
+export default Post = ({
+  userID,
+  username,
+  text,
+  numLikes,
+  postId, // Cuando es Post del User recibe el post.id, cuando no, recibe -1
+  onEditPress,
+  onDeletePress,
+}) => {
   const PROFILE_PIC_POST_SIZE = 36;
   const [btnLikePressed, setBtnLikePressed] = useState(false);
   const [btnLikeColor, setBtnLikeColor] = useState("");
@@ -16,19 +29,34 @@ export default Post = ({ userID, username, text, numLikes }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.row}>
-        <Text style={styles.username}>{username}</Text>
+      <View>
+        <View style={styles.row}>
+          <Text style={styles.username}>{username}</Text>
+        </View>
+        <View style={styles.row}>
+          <ProfilePic username={username} size={PROFILE_PIC_POST_SIZE} />
+          <Text style={styles.text}>{text}</Text>
+        </View>
+        <View style={styles.row}>
+          <Pressable onPress={handlePressLikeBtn}>
+            <FontAwesomeIcon icon={faHeart} color={btnLikeColor} />
+          </Pressable>
+          <Text>{numLikes} likes</Text>
+        </View>
       </View>
-      <View style={styles.row}>
-        <ProfilePic username={username} size={PROFILE_PIC_POST_SIZE}/> 
-        <Text style={styles.text}>{text}</Text>
-      </View>
-      <View style={styles.row}>
-        <Pressable onPress={handlePressLikeBtn} >
-          <FontAwesomeIcon icon={faHeart} color={btnLikeColor} />
-        </Pressable>
-        <Text>{numLikes} likes</Text>
-      </View>
+
+      {postId ? (
+        <View style={styles.editDelete}>
+          <Pressable onPress={onDeletePress}>
+            <FontAwesomeIcon icon={faTrashAlt} color="grey" size={20} />
+          </Pressable>
+          <Pressable onPress={onEditPress}>
+            <FontAwesomeIcon icon={faEdit} color="black" size={20} />
+          </Pressable>
+        </View>
+      ) : (
+        <></>
+      )}
     </View>
   );
 };
@@ -47,12 +75,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     elevation: 3,
     width: "100%",
-    height: 125,
+    paddingTop: 10,
+    paddingBottom: 10,
     justifyContent: "space-evenly",
   },
   row: {
     flexDirection: "row",
     columnGap: 10,
+    paddingBottom: 5,
     alignItems: "center",
   },
   username: {
@@ -74,5 +104,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 15,
     flexShrink: 1,
-  }
+  },
+  editDelete: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-around",
+    paddingTop: 10,
+    margin: 10,
+  },
 });

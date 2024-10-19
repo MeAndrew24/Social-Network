@@ -40,12 +40,32 @@ export default usePost = (resourceType) => {
   const loadNewerPosts = async () => {
     const data = await fetchPosts(1); // Always load the first page for new posts
 
-    if (!Array.isArray(data)) throw new Error("Error: Fetched data is not an array.");
+    if (!Array.isArray(data))
+      throw new Error("Error: Fetched data is not an array.");
 
     setPosts((prevPosts) => {
-      const existingIds = new Set(prevPosts.map((post) => post.id));
-      const newPosts = data.filter((post) => !existingIds.has(post.id));
-      return [...newPosts, ...prevPosts];
+      const existingPostsMap = new Map(
+        prevPosts.map((post) => [post.id, post])
+      );
+
+      const newPostIds = new Set(data.map((post) => post.id));
+
+      const newOrUpdatedPosts = data.filter((post) => {
+        const existingPost = existingPostsMap.get(post.id);
+        return !existingPost || existingPost.content !== post.content;
+      });
+
+      const updatedPosts = prevPosts
+        .map((post) => {
+          const newPost = newOrUpdatedPosts.find((p) => p.id === post.id);
+          return newPost ? newPost : post;
+        })
+        .filter((post) => newPostIds.has(post.id));
+
+      return [
+        ...newOrUpdatedPosts.filter((post) => !existingPostsMap.has(post.id)),
+        ...updatedPosts,
+      ];
     });
 
     setFlagLoadAction(LOAD_POST_ACTION[0]);
@@ -55,8 +75,9 @@ export default usePost = (resourceType) => {
   const loadOlderPosts = async (pageNumber) => {
     const data = await fetchPosts(pageNumber); // Use pageNumber for older posts
 
-    if (!Array.isArray(data)) throw new Error("Error: Fetched data is not an array.");
- 
+    if (!Array.isArray(data))
+      throw new Error("Error: Fetched data is not an array.");
+
     setPosts((prevPosts) => {
       if (data.length === 0) {
         setHasMorePosts(false); // No more posts to load
@@ -75,7 +96,8 @@ export default usePost = (resourceType) => {
   const loadInitialPosts = async () => {
     const data = await fetchPosts(1); // Load the first page for the initial load
 
-    if (!Array.isArray(data)) throw new Error("Error: Fetched data is not an array.");
+    if (!Array.isArray(data))
+      throw new Error("Error: Fetched data is not an array.");
 
     setPosts(data); // Set the posts to the result of the first page
     setPrevPage(1); // Initialize page to 1
@@ -84,15 +106,15 @@ export default usePost = (resourceType) => {
 
   // Single useEffect hook to manage loading actions
   useEffect(() => {
-    console.log(flagLoadAction);
+    console.log(flagLoadAction); // BORRAR AL FINAL
+
     // Define an async function inside the useEffect
     const handleLoadAction = async () => {
       if (flagLoadAction === "NONE") return;
 
       if (flagLoadAction === "INITIAL") {
         await loadInitialPosts(); // Load initial posts on mount
-      }
-      else if (flagLoadAction === "NEW") {
+      } else if (flagLoadAction === "NEW") {
         await loadNewerPosts(); // Load newer posts
       } else if (flagLoadAction === "OLD") {
         await loadOlderPosts(prevPage + 1); // Load older posts (increment page)
@@ -119,11 +141,11 @@ export default usePost = (resourceType) => {
     }
   };
 
-  return { 
-    posts, 
-    isLoading, 
-    handleLoadPastPosts, 
-    handleLoadNewPosts, 
-    setFlagLoadAction 
+  return {
+    posts,
+    isLoading,
+    handleLoadPastPosts,
+    handleLoadNewPosts,
+    setFlagLoadAction,
   };
 };

@@ -1,4 +1,10 @@
-import { VirtualizedList, View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  VirtualizedList,
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useLogin } from "../context/LoginProvider";
 import Post from "../components/Post";
@@ -7,14 +13,14 @@ import NewPostButton from "../components/NewPostButton";
 import usePost from "../hooks/usePost";
 import useUser from "../hooks/useUser";
 
-
 export default function Profile() {
   const PROFILE_PIC_PAGE_SIZE = 72;
   const { userInfo } = useUser();
   const { userSession } = useLogin();
 
   const resourceType = `users/${userSession.userId}/posts`;
-  const { posts, handleLoadPastPosts, handleLoadNewPosts } = usePost(resourceType);
+  const { posts, handleLoadPastPosts, handleLoadNewPosts } =
+    usePost(resourceType);
   const getItem = (data, index) => data[index];
   const getItemCount = (data) => data.length;
   const navigation = useNavigation();
@@ -24,13 +30,28 @@ export default function Profile() {
       username={item.username}
       text={item.content}
       numLikes={item.likes.length}
+      postId={item.id}
+      onEditPress={() =>
+        navigation.navigate("Share Your Thoughts", {
+          postId: item.id,
+          currentText: item.content,
+        })
+      }
+      onDeletePress={() =>
+        navigation.navigate("Delete Thought Confirmation", {
+          postId: item.id,
+        })
+      }
     />
   );
 
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.arriba}>
-        <ProfilePic username={userSession.username} size={PROFILE_PIC_PAGE_SIZE}/> 
+        <ProfilePic
+          username={userSession.username}
+          size={PROFILE_PIC_PAGE_SIZE}
+        />
 
         <View
           style={{
@@ -52,7 +73,14 @@ export default function Profile() {
         </View>
       </View>
       <View style={styles.abajo}>
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 10,
+          }}
+        >
           <VirtualizedList
             style={{ width: "96%" }}
             data={posts}
@@ -64,12 +92,15 @@ export default function Profile() {
             onEndReachedThreshold={0.1}
             onStartReached={handleLoadNewPosts}
             onStartReachedThreshold={0.1}
-            ListHeaderComponent={
-              <Text style={styles.subtitle}>Posts</Text>
-            }
+            ListHeaderComponent={<Text style={styles.subtitle}>Posts</Text>}
           />
           <NewPostButton
-            onPress={() => navigation.navigate("Share Your Thoughts")}
+            onPress={() =>
+              navigation.navigate("Share Your Thoughts", {
+                postId: -1,
+                currentText: "",
+              })
+            }
           />
         </View>
       </View>

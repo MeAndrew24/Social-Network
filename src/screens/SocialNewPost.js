@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
 import ButtonLog from "../components/ButtonLog";
 import { useLogin } from "../context/LoginProvider";
+import { useNavigation } from "@react-navigation/native";
 
-function SocialNewPost({ navigation }) {
-  const [postText, setPostText] = useState("");
+function SocialNewPost({ navigation, route }) {
+  const { postId, currentText } = route.params;
+  const [postText, setPostText] = useState(currentText || "");
   const [isLoading, setIsLoading] = useState(false);
   const [postSuccess, setPostSuccess] = useState(false);
   const { userSession } = useLogin();
+  const navigationRouter = useNavigation();
 
   const [errors, setErrors] = useState({});
 
@@ -57,6 +60,53 @@ function SocialNewPost({ navigation }) {
     }
   };
 
+  const handlePostEdit = async () => {
+    let inputValidationErrors = {};
+
+    if (!postText) {
+      inputValidationErrors.postText = "Cannot submit an empty post";
+    }
+
+    setErrors(inputValidationErrors);
+
+    if (Object.keys(inputValidationErrors).length === 0) {
+      try {
+        setIsLoading(true);
+
+        const response = await fetch(
+          `https://social-network-v7j7.onrender.com/api/posts/${postId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${userSession.token}`,
+            },
+            body: JSON.stringify({
+              content: postText,
+            }),
+          }
+        );
+
+        const json = await response.json();
+
+        if (response.ok) {
+          console.log("Post actualizado con exito, respuesta:");
+          console.log(json);
+          setPostSuccess(true);
+          setPostText("");
+          navigationRouter.navigate("Tabs");
+        } else {
+          setErrors({ server: json.message || "Something went wrong." });
+          throw new Error(errors.server);
+        }
+      } catch (e) {
+        console.error("Error:", e.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -73,19 +123,32 @@ function SocialNewPost({ navigation }) {
       )}
 
       {postSuccess ? (
-        <Text style={styles.success}>Post created successfully!</Text>
+        <Text style={styles.success}>
+          Thought {postId === -1 ? "created" : "updated"} successfully!
+        </Text>
       ) : (
         <></>
       )}
 
-      <View style={styles.button}>
-        <ButtonLog
-          color={"#31D888"}
-          titleB="Submit thought"
-          onPress={handlePostCreation}
-          loading={isLoading}
-        />
-      </View>
+      {postId === -1 ? (
+        <View style={styles.button}>
+          <ButtonLog
+            color={"#31D888"}
+            titleB="Submit a new thought"
+            onPress={handlePostCreation}
+            loading={isLoading}
+          />
+        </View>
+      ) : (
+        <View style={styles.button}>
+          <ButtonLog
+            color={"#31D888"}
+            titleB="Update your thought"
+            onPress={handlePostEdit}
+            loading={isLoading}
+          />
+        </View>
+      )}
     </View>
   );
 }

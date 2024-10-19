@@ -7,7 +7,8 @@ import NewPostButton from "../components/NewPostButton";
 
 export default function AllPosts() {
   const resourceType = "posts";
-  const { posts, handleLoadPastPosts, handleLoadNewPosts } = usePost(resourceType);
+  const { posts, handleLoadPastPosts, handleLoadNewPosts } =
+    usePost(resourceType);
   const navigation = useNavigation();
 
   const getItem = (data, index) => data[index];
@@ -22,7 +23,12 @@ export default function AllPosts() {
 
   return (
     <View
-      style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 10,
+      }}
     >
       <VirtualizedList
         style={{ width: "96%" }}
@@ -37,7 +43,12 @@ export default function AllPosts() {
         onStartReachedThreshold={0.1}
       />
       <NewPostButton
-        onPress={() => navigation.navigate("Share Your Thoughts")}
+        onPress={() =>
+          navigation.navigate("Share Your Thoughts", {
+            postId: -1,
+            currentText: "",
+          })
+        }
       />
     </View>
   );

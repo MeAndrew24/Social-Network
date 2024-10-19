@@ -6,6 +6,7 @@ import AllPosts from "./AllPosts";
 import Following from "./Following";
 import Profile from "./Profile";
 import SocialNewPost from "./SocialNewPost";
+import DeletePost from "./DeletePost";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -70,17 +71,13 @@ export default function NavMain() {
       <Stack.Screen
         name="Tabs"
         component={Tabs}
-        options={{ headerShown: false }} 
+        options={{ headerShown: false }}
       />
-      <Stack.Screen 
-        name="Share Your Thoughts" 
-        component={SocialNewPost} 
-      />
+      <Stack.Screen name="Share Your Thoughts" component={SocialNewPost} />
+      <Stack.Screen name="Delete Thought Confirmation" component={DeletePost} />
     </Stack.Navigator>
   );
 }
-
-
 
 /* export default function NavTab() {
   return (
