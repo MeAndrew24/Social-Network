@@ -8,10 +8,9 @@ export default usePost = (resourceType) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [flagLoadAction, setFlagLoadAction] = useState(LOAD_POST_ACTION[3]); // Start with "NONE"
+  const [flagLoadAction, setFlagLoadAction] = useState(LOAD_POST_ACTION[3]);
   const { userSession } = useLogin();
 
-  // Fetch posts function
   const fetchPosts = async (pageNumber) => {
     try {
       setIsLoading(true);
@@ -26,7 +25,8 @@ export default usePost = (resourceType) => {
         }
       );
 
-      if (!response.ok) throw new Error("Error: Unable to fetch posts.");
+      if (!response.ok) 
+        throw new Error("Error: Unable to fetch posts.");
       const data = await response.json();
       return data;
     } catch (error) {
@@ -36,116 +36,93 @@ export default usePost = (resourceType) => {
     }
   };
 
-  // Load newer posts (for refreshing)
-  const loadNewerPosts = async () => {
-    const data = await fetchPosts(1); // Always load the first page for new posts
 
-    if (!Array.isArray(data))
+  // Load newer posts (for refreshing)
+  const loadNewPosts = async () => {
+    const data = await fetchPosts(1); 
+    if (!Array.isArray(data)) 
       throw new Error("Error: Fetched data is not an array.");
 
     setPosts((prevPosts) => {
       const existingPostsMap = new Map(
         prevPosts.map((post) => [post.id, post])
       );
-
-      const newPostIds = new Set(data.map((post) => post.id));
-
+  
       const newOrUpdatedPosts = data.filter((post) => {
-        const existingPost = existingPostsMap.get(post.id);
-        return !existingPost || existingPost.content !== post.content;
+        return !prevPosts.has(post.id) || prevPosts.get(post.id).content !== post.content;
       });
-
-      const updatedPosts = prevPosts
-        .map((post) => {
-          const newPost = newOrUpdatedPosts.find((p) => p.id === post.id);
-          return newPost ? newPost : post;
-        })
-        .filter((post) => newPostIds.has(post.id));
-
+  
+      const updatedPosts = prevPosts.map((post) => {
+        return newOrUpdatedPosts.find((p) => p.id === post.id) || post;
+      });
+  
       return [
         ...newOrUpdatedPosts.filter((post) => !existingPostsMap.has(post.id)),
         ...updatedPosts,
       ];
-    });
-
+  });
     setFlagLoadAction(LOAD_POST_ACTION[0]);
   };
 
+
   // Load older posts (for infinite scroll)
-  const loadOlderPosts = async (pageNumber) => {
-    const data = await fetchPosts(pageNumber); // Use pageNumber for older posts
-
-    if (!Array.isArray(data))
+  const loadPastPosts = async (pageNumber) => {
+    const data = await fetchPosts(pageNumber); 
+    if (!Array.isArray(data)) 
       throw new Error("Error: Fetched data is not an array.");
-
+ 
     setPosts((prevPosts) => {
       if (data.length === 0) {
-        setHasMorePosts(false); // No more posts to load
+        setHasMorePosts(false);
         return prevPosts;
       }
-      setPrevPage(pageNumber); // Update the previous page number
+      setPrevPage(pageNumber);
       const existingIds = new Set(prevPosts.map((post) => post.id));
       const newPosts = data.filter((post) => !existingIds.has(post.id));
       return [...prevPosts, ...newPosts];
     });
-
     setFlagLoadAction(LOAD_POST_ACTION[0]);
   };
 
-  // Load initial posts
-  const loadInitialPosts = async () => {
-    const data = await fetchPosts(1); // Load the first page for the initial load
 
-    if (!Array.isArray(data))
+  const loadInitialPosts = async () => {
+    const data = await fetchPosts(1); 
+    if (!Array.isArray(data)) 
       throw new Error("Error: Fetched data is not an array.");
 
-    setPosts(data); // Set the posts to the result of the first page
-    setPrevPage(1); // Initialize page to 1
+    setPosts(data);
     setFlagLoadAction(LOAD_POST_ACTION[0]);
+  };
+
+
+  // Define an async function to use into the useEffect
+  const handleLoadAction = async () => {
+    if (flagLoadAction === "NONE") return;
+    if (flagLoadAction === "INITIAL") await loadInitialPosts();
+    else if (flagLoadAction === "NEW") await loadNewPosts(); 
+    else if (flagLoadAction === "OLD") await loadPastPosts(prevPage + 1);
   };
 
   // Single useEffect hook to manage loading actions
   useEffect(() => {
-    console.log(flagLoadAction); // BORRAR AL FINAL
-
-    // Define an async function inside the useEffect
-    const handleLoadAction = async () => {
-      if (flagLoadAction === "NONE") return;
-
-      if (flagLoadAction === "INITIAL") {
-        await loadInitialPosts(); // Load initial posts on mount
-      } else if (flagLoadAction === "NEW") {
-        await loadNewerPosts(); // Load newer posts
-      } else if (flagLoadAction === "OLD") {
-        await loadOlderPosts(prevPage + 1); // Load older posts (increment page)
-      }
-    };
-
-    // Call the async function
     handleLoadAction();
-  }, [flagLoadAction]); // Runs when flagLoadAction changes
+  }, [flagLoadAction]);
 
-  // Trigger for loading older posts (infinite scroll)
-  const handleLoadPastPosts = () => {
-    if (!isLoading && hasMorePosts && flagLoadAction === LOAD_POST_ACTION[0]) {
-      setFlagLoadAction(LOAD_POST_ACTION[1]); // OLD: Load older posts
-    }
-  };
 
   // Trigger for loading newer posts (refresh)
   const handleLoadNewPosts = () => {
     if (!isLoading && !isFirstLoad && flagLoadAction === LOAD_POST_ACTION[0]) {
-      setFlagLoadAction(LOAD_POST_ACTION[2]); // NEW: Load newer posts
+      setFlagLoadAction(LOAD_POST_ACTION[2]);
     } else if (isFirstLoad) {
-      setIsFirstLoad(false); // Prevent re-triggering on the first load
+      setIsFirstLoad(false);
     }
   };
 
-  return {
-    posts,
-    isLoading,
-    handleLoadPastPosts,
-    handleLoadNewPosts,
-    setFlagLoadAction,
+  // Trigger for loading older posts (infinite scroll)
+  const handleLoadPastPosts = () => {
+    if (!isLoading && hasMorePosts && flagLoadAction === LOAD_POST_ACTION[0])
+      setFlagLoadAction(LOAD_POST_ACTION[1]); 
   };
+
+  return { posts, isLoading, handleLoadNewPosts, handleLoadPastPosts, setFlagLoadAction };
 };
