@@ -5,7 +5,7 @@ import Post from "../components/Post";
 import usePost from "../hooks/usePost";
 import NewPostButton from "../components/NewPostButton";
 
-export default function AllPosts() {
+export default function Following() {
   const resourceType = "feed";
   const { posts, handleLoadPastPosts, handleLoadNewPosts } =
     usePost(resourceType);
@@ -15,6 +15,7 @@ export default function AllPosts() {
   const getItemCount = (data) => data.length;
   const renderPost = ({ item }) => (
     <Post
+      userID={item.user_id}
       username={item.username}
       text={item.content}
       numLikes={item.likes.length}
