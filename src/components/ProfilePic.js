@@ -1,6 +1,6 @@
 import { Pressable, Text, StyleSheet, View } from "react-native";
 
-export default ProfilePic = ({ username, size }) => {
+export default ProfilePic = ({ userID, username, size }) => {
   const colorArray = ["#56E39F", "#3066BE", "#FF4242", "#F1A208"];
   const firstLetterAsciiValue = username.charCodeAt(0);
   const color = colorArray[firstLetterAsciiValue % 4];

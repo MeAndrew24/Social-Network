@@ -7,21 +7,8 @@ import Following from "./Following";
 import Profile from "./Profile";
 import SocialNewPost from "./SocialNewPost";
 
-const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
-export default function NavTab() {
-  return (
-    <Stack.Navigator initialRouteName="Tabs">
-      <Stack.Screen
-        name="Tabs"
-        component={Tabs}
-        options={{ headerShown: false }} 
-      />
-      <Stack.Screen name="Share Your Thoughts" component={SocialNewPost} />
-    </Stack.Navigator>
-  );
-}
+const Tab = createBottomTabNavigator();
 
 function Tabs() {
   return (
@@ -76,6 +63,24 @@ function Tabs() {
     </Tab.Navigator>
   );
 }
+
+export default function NavMain() {
+  return (
+    <Stack.Navigator initialRouteName="Tabs">
+      <Stack.Screen
+        name="Tabs"
+        component={Tabs}
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="Share Your Thoughts" 
+        component={SocialNewPost} 
+      />
+    </Stack.Navigator>
+  );
+}
+
+
 
 /* export default function NavTab() {
   return (

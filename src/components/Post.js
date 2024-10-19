@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons/faHeart";
 import ProfilePic from "../components/ProfilePic";
 
-export default Post = ({ username, text, numLikes }) => {
+export default Post = ({ userID, username, text, numLikes }) => {
   const PROFILE_PIC_POST_SIZE = 36;
   const [btnLikePressed, setBtnLikePressed] = useState(false);
   const [btnLikeColor, setBtnLikeColor] = useState("");

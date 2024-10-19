@@ -1,16 +1,17 @@
 import React from "react";
-import { FlatList, View } from "react-native";
+import { VirtualizedList, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import Post from "../components/Post";
 import usePost from "../hooks/usePost";
 import NewPostButton from "../components/NewPostButton";
-import { useNavigation } from "@react-navigation/native";
 
-export default function Following() {
+export default function AllPosts() {
   const resourceType = "feed";
-  const { posts, loadMorePosts } = usePost(resourceType);
+  const { posts, handleLoadPastPosts, handleLoadNewPosts } = usePost(resourceType);
   const navigation = useNavigation();
 
-
+  const getItem = (data, index) => data[index];
+  const getItemCount = (data) => data.length;
   const renderPost = ({ item }) => (
     <Post
       username={item.username}
@@ -20,20 +21,24 @@ export default function Following() {
   );
 
   return (
-    <View View style={{ flex: 1,alignItems: "center", marginTop: 10 }}>
-      <FlatList
-        style={{ width: "95%" }}
+    <View
+      style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}
+    >
+      <VirtualizedList
+        style={{ width: "96%" }}
         data={posts}
         renderItem={renderPost}
         keyExtractor={(item) => item.id.toString()}
-        onEndReached={loadMorePosts}
-        onEndReachedThreshold={0.5}
-        initialNumToRender={10}
+        getItem={getItem}
+        getItemCount={getItemCount}
+        onEndReached={handleLoadPastPosts}
+        onEndReachedThreshold={0.1}
+        onStartReached={handleLoadNewPosts}
+        onStartReachedThreshold={0.1}
       />
       <NewPostButton
         onPress={() => navigation.navigate("Share Your Thoughts")}
       />
-
     </View>
   );
 }
