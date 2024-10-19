@@ -1,24 +1,22 @@
-import { VirtualizedList, View, Text, StyleSheet, ActivityIndicator } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { VirtualizedList, View, Text, StyleSheet, ActivityIndicator, Button } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import { useLogin } from "../context/LoginProvider";
 import Post from "../components/Post";
 import ProfilePic from "../components/ProfilePic";
-import NewPostButton from "../components/NewPostButton";
 import usePost from "../hooks/usePost";
 import useUser from "../hooks/useUser";
 
-
 export default function Profile() {
   const PROFILE_PIC_PAGE_SIZE = 72;
-  const { userInfo } = useUser();
   const { userSession } = useLogin();
 
-  const resourceType = `users/${userSession.userId}/posts`;
-  const { posts, handleLoadPastPosts, handleLoadNewPosts } = usePost(resourceType);
+  const id = useRoute()?.params?.userID || userSession.userId;
+  const { userInfo, isLoading, error, isMe } = useUser(id);
+  const resourceType = `users/${id}/posts`;
+  const { posts, handleLoadPastPosts, handleLoadNewPosts } = usePost(resourceType);  
+
   const getItem = (data, index) => data[index];
   const getItemCount = (data) => data.length;
-  const navigation = useNavigation();
-
   const renderPost = ({ item }) => (
     <Post
       username={item.username}
@@ -27,31 +25,47 @@ export default function Profile() {
     />
   );
 
+  if (isLoading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (!userInfo) return null;
+
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.arriba}>
-        <ProfilePic username={userSession.username} size={PROFILE_PIC_PAGE_SIZE}/> 
-
-        <View
-          style={{
-            justifyContent: "space-between",
-            flexDirection: "row",
-            width: "52%",
-            marginTop: 10,
-          }}
-        >
+      <View style={styles.topBar}>
+        <ProfilePic username={userInfo.username} size={PROFILE_PIC_PAGE_SIZE}/> 
+        <Text style={styles.username}>{userInfo.username}</Text>
+        <View style={styles.followingRow}>
           <View style={{ flexDirection: "row" }}>
             <Text>Followers: </Text>
             <Text>{userInfo?.follower_count}</Text>
           </View>
-
           <View style={{ flexDirection: "row" }}>
             <Text>Following: </Text>
             <Text>{userInfo?.following_count}</Text>
           </View>
         </View>
+        {!isMe && (
+          <Button 
+            title={userInfo?.is_following ? "Unfollow" : "Follow"} 
+            onPress={() => console.log("Follow button pressed")}
+          />
+        )} 
       </View>
-      <View style={styles.abajo}>
+      <View style={styles.postSide}>
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
           <VirtualizedList
             style={{ width: "96%" }}
@@ -68,9 +82,6 @@ export default function Profile() {
               <Text style={styles.subtitle}>Posts</Text>
             }
           />
-          <NewPostButton
-            onPress={() => navigation.navigate("Share Your Thoughts")}
-          />
         </View>
       </View>
     </View>
@@ -78,18 +89,30 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  arriba: {
+  topBar: {
     backgroundColor: "#fbfbfb",
     width: "100%",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    rowGap: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   profilePic: {
     borderRadius: 64,
     justifyContent: "center",
     height: 64,
     width: 64,
+  },
+  username: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  followingRow: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    width: "52%",
   },
   subtitle: {
     fontSize: 20,
@@ -98,7 +121,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontWeight: "bold",
   },
-  abajo: {
+  postSide: {
     width: "100%",
     flex: 3.5,
   },
@@ -108,4 +131,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 30,
   },
+  followButton: {
+    
+  }
 });
