@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLogin } from "../context/LoginProvider";
+import { useUser } from "../hooks/useUser";
 
-export default useFollow = (userID) => {
+const useFollow = (userID, setIsUpdated, isUpdated) => {
   const { userSession } = useLogin();
-  const [method, setMethod] = useState[""];
+  const [method, setMethod] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const followLogic = async (userID) => {
+  const followLogic = async () => {
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -20,19 +22,21 @@ export default useFollow = (userID) => {
       );
 
       if (!response.ok) 
-        throw new Error("Error: Unable to fetch posts.");
-
+        throw new Error("Error: Unable to follow/unfollow user.");
     } catch (error) {
-      console.error("Failed to load posts:", error.message);
+      console.error("Failed to follow/unfollow user:", error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleFollow = async (isFollow, id) => {
-    (!isFollow) ? setMethod("PUT") : setMethod("DELETE")
-    await followLogic(id);
+  const handleFollow = async (isFollow) => {
+    setMethod(!isFollow ? "PUT" : "DELETE");
+    await followLogic();
+    setIsUpdated(!isUpdated);
   }
 
-  return { handleFollow }
-}
+  return { handleFollow, isLoading };
+};
+
+export default useFollow;

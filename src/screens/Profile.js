@@ -16,7 +16,7 @@ export default function Profile() {
   const { userInfo, isLoading, error, isMe } = useUser(id);
   const resourceType = `users/${id}/posts`;
   const { posts, handleLoadPastPosts, handleLoadNewPosts } = usePost(resourceType); 
-  const { handleFollow } = useFollow();
+  const { handleFollow } = useFollow(id);
 
   const getItem = (data, index) => data[index];
   const getItemCount = (data) => data.length;
@@ -77,9 +77,9 @@ export default function Profile() {
         {!isMe && (
           <Button 
             title={userInfo?.is_following ? "Unfollow" : "Follow"} 
-            onPress={handleFollow(userInfo.is_following, userInfo.id)}
+            onPress={() => handleFollow(userInfo.is_following, userInfo.id)}
           />
-        )} 
+        )}
       </View>
       <View style={styles.postSide}>
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
