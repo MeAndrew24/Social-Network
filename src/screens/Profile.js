@@ -6,6 +6,7 @@ import Post from "../components/Post";
 import ProfilePic from "../components/ProfilePic";
 import usePost from "../hooks/usePost";
 import useUser from "../hooks/useUser";
+import useFollow from "../hooks/useFollow";
 
 export default function Profile() {
   const PROFILE_PIC_PAGE_SIZE = 72;
@@ -14,7 +15,8 @@ export default function Profile() {
   const id = useRoute()?.params?.userID || userSession.userId;
   const { userInfo, isLoading, error, isMe } = useUser(id);
   const resourceType = `users/${id}/posts`;
-  const { posts, handleLoadPastPosts, handleLoadNewPosts } = usePost(resourceType);  
+  const { posts, handleLoadPastPosts, handleLoadNewPosts } = usePost(resourceType); 
+  const { handleFollow } = useFollow(id);
 
   const getItem = (data, index) => data[index];
   const getItemCount = (data) => data.length;
@@ -75,9 +77,9 @@ export default function Profile() {
         {!isMe && (
           <Button 
             title={userInfo?.is_following ? "Unfollow" : "Follow"} 
-            onPress={() => console.log("Follow button pressed")}
+            onPress={() => handleFollow(userInfo.is_following, userInfo.id)}
           />
-        )} 
+        )}
       </View>
       <View style={styles.postSide}>
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>

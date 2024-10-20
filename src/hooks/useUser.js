@@ -6,7 +6,9 @@ export default useUser = (userID) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isMe, setIsMe] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
   const { userSession } = useLogin();
+
   
   const fetchUserInfo = async () => {
     try {
@@ -35,7 +37,7 @@ export default useUser = (userID) => {
 
   useEffect(() => {
     fetchUserInfo();
-  }, [userID]);
+  }, [userID, isUpdated]);
 
-  return { userInfo, isLoading, error, isMe };
+  return { userInfo, isLoading, error, isMe, setIsUpdated, isUpdated };
 };

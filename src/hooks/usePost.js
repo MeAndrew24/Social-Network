@@ -49,7 +49,7 @@ export default usePost = (resourceType) => {
       );
   
       const newOrUpdatedPosts = data.filter((post) => {
-        return !prevPosts.has(post.id) || prevPosts.get(post.id).content !== post.content;
+        return !existingPostsMap.has(post.id) || existingPostsMap.get(post.id).content !== post.content;
       });
   
       const updatedPosts = prevPosts.map((post) => {
@@ -60,7 +60,8 @@ export default usePost = (resourceType) => {
         ...newOrUpdatedPosts.filter((post) => !existingPostsMap.has(post.id)),
         ...updatedPosts,
       ];
-  });
+    });
+    
     setFlagLoadAction(LOAD_POST_ACTION[0]);
   };
 
