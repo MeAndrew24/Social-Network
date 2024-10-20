@@ -32,7 +32,7 @@ export default function Following() {
       }}
     >
       <VirtualizedList
-        style={{ width: "96%" }}
+        style={{ width: "100%" }}
         data={posts}
         renderItem={renderPost}
         keyExtractor={(item) => item.id.toString()}
