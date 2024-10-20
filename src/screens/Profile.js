@@ -1,12 +1,19 @@
-import { VirtualizedList, View, Text, StyleSheet, ActivityIndicator, Button } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useRoute } from "@react-navigation/native";
+import {
+  VirtualizedList,
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Button,
+} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useLogin } from "../context/LoginProvider";
 import Post from "../components/Post";
 import ProfilePic from "../components/ProfilePic";
 import usePost from "../hooks/usePost";
 import useUser from "../hooks/useUser";
 import useFollow from "../hooks/useFollow";
+import { useEffect } from "react";
 
 export default function Profile() {
   const PROFILE_PIC_PAGE_SIZE = 72;
@@ -15,18 +22,30 @@ export default function Profile() {
   const id = useRoute()?.params?.userID || userSession.userId;
   const { userInfo, isLoading, error, isMe } = useUser(id);
   const resourceType = `users/${id}/posts`;
-  const { posts, handleLoadPastPosts, handleLoadNewPosts } = usePost(resourceType); 
+  const { posts, handleLoadPastPosts, handleLoadNewPosts, setFlagLoadAction } =
+    usePost(resourceType);
   const { handleFollow } = useFollow(id);
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      setFlagLoadAction("NEW");
+    });
+
+    return unsubscribe;
+  }, [navigation, setFlagLoadAction]);
 
   const getItem = (data, index) => data[index];
   const getItemCount = (data) => data.length;
-  const navigation = useNavigation();
+
   const renderPost = ({ item }) => (
     <Post
       username={item.username}
       text={item.content}
       numLikes={item.likes.length}
       postId={item.id}
+      isMe={isMe}
       onEditPress={() =>
         navigation.navigate("Share Your Thoughts", {
           postId: item.id,
@@ -62,7 +81,7 @@ export default function Profile() {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.topBar}>
-        <ProfilePic username={userInfo.username} size={PROFILE_PIC_PAGE_SIZE}/> 
+        <ProfilePic username={userInfo.username} size={PROFILE_PIC_PAGE_SIZE} />
         <Text style={styles.username}>{userInfo.username}</Text>
         <View style={styles.followingRow}>
           <View style={{ flexDirection: "row" }}>
@@ -75,16 +94,23 @@ export default function Profile() {
           </View>
         </View>
         {!isMe && (
-          <Button 
-            title={userInfo?.is_following ? "Unfollow" : "Follow"} 
+          <Button
+            title={userInfo?.is_following ? "Unfollow" : "Follow"}
             onPress={() => handleFollow(userInfo.is_following, userInfo.id)}
           />
         )}
       </View>
-      <View style={styles.postSide}>
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
+      <View style={[styles.postSide, !isMe && styles.postSideExpanded]}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 10,
+          }}
+        >
           <VirtualizedList
-            style={{ width: "96%" }}
+            style={{ width: "100%" }}
             data={posts}
             renderItem={renderPost}
             keyExtractor={(item) => item.id.toString()}
@@ -139,13 +165,23 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 3.5,
   },
-  capitalLetter: {
-    color: "white",
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 30,
+  postSideExpanded: {
+    flex: 2.3,
   },
-  followButton: {
-    
-  }
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    padding: 10,
+    fontWeight: "bold",
+  },
 });

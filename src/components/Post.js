@@ -14,9 +14,10 @@ export default Post = ({
   username,
   text,
   numLikes,
-  postId, // Cuando es Post del User recibe el post.id, cuando no, recibe -1
+  postId,
   onEditPress,
   onDeletePress,
+  isMe,
 }) => {
   const PROFILE_PIC_POST_SIZE = 36;
   const [btnLikePressed, setBtnLikePressed] = useState(false);
@@ -31,32 +32,42 @@ export default Post = ({
     <View style={styles.container}>
       <View>
         <View style={styles.row}>
-          <Text style={styles.username}>{username}</Text>
+          <ProfilePic
+            userID={userID}
+            username={username}
+            size={PROFILE_PIC_POST_SIZE}
+          />
+          <View style={[styles.row, styles.juntar]}>
+            <Text style={styles.username}>{username}</Text>
+            {isMe && postId ? (
+              <View style={styles.editDelete}>
+                <Pressable onPress={onDeletePress} style={{ marginRight: 15 }}>
+                  <FontAwesomeIcon
+                    icon={faTrashAlt}
+                    color="#FF4242"
+                    size={20}
+                  />
+                </Pressable>
+                <Pressable onPress={onEditPress}>
+                  <FontAwesomeIcon icon={faEdit} color="#F1A208" size={20} />
+                </Pressable>
+              </View>
+            ) : (
+              <></>
+            )}
+          </View>
         </View>
-        <View style={styles.row}>
-          <ProfilePic userID={userID} username={username} size={PROFILE_PIC_POST_SIZE}/>
+
+        <View style={styles.content}>
           <Text style={styles.text}>{text}</Text>
-        </View>
-        <View style={styles.row}>
-          <Pressable onPress={handlePressLikeBtn}>
-            <FontAwesomeIcon icon={faHeart} color={btnLikeColor} />
-          </Pressable>
-          <Text>{numLikes} likes</Text>
+          <View style={styles.row}>
+            <Pressable onPress={handlePressLikeBtn}>
+              <FontAwesomeIcon icon={faHeart} color={btnLikeColor} />
+            </Pressable>
+            <Text>{numLikes} likes</Text>
+          </View>
         </View>
       </View>
-
-      {postId ? (
-        <View style={styles.editDelete}>
-          <Pressable onPress={onDeletePress}>
-            <FontAwesomeIcon icon={faTrashAlt} color="grey" size={20} />
-          </Pressable>
-          <Pressable onPress={onEditPress}>
-            <FontAwesomeIcon icon={faEdit} color="black" size={20} />
-          </Pressable>
-        </View>
-      ) : (
-        <></>
-      )}
     </View>
   );
 };
@@ -66,14 +77,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderColor: "gainsboro",
     borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 20,
     paddingHorizontal: 15,
     shadowColor: "black",
-    shadowOffset: { height: 2 },
-    shadowRadius: 4,
-    shadowOpacity: 0.1,
-    elevation: 3,
     width: "100%",
     paddingTop: 10,
     paddingBottom: 10,
@@ -82,33 +87,30 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     columnGap: 10,
-    paddingBottom: 5,
     alignItems: "center",
+  },
+  content: {
+    marginLeft: 45,
   },
   username: {
     color: "black",
     textAlign: "left",
     fontWeight: "bold",
   },
-  profilePic: {
-    borderRadius: 64,
-    justifyContent: "center",
-    height: 36,
-    width: 36,
-  },
-  capitalLetter: {
-    color: "white",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
   text: {
     fontSize: 15,
-    flexShrink: 1,
+    width: "100%",
+    marginBottom: 10,
   },
   editDelete: {
-    flexDirection: "row-reverse",
-    justifyContent: "space-around",
-    paddingTop: 10,
-    margin: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  juntar: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
